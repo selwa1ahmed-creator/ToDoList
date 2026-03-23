@@ -1,0 +1,6 @@
+# Ignore the database state
+database.json
+
+# Ignore python caches
+__pycache__/
+*.pyc

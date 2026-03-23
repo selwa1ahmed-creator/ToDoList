@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Todo App</title>
+    <!-- Include Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Include Quill for Rich Text Editing -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 24px;">
+            <h2 style="margin-bottom: 24px; color: #fff; text-align: center;">Welcome to Todo App</h2>
+            <form id="login-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <input type="email" id="login-email" placeholder="Email (e.g., john@gmail.com)" required autocomplete="off" class="login-input">
+                <input type="password" id="login-password" placeholder="Password" required autocomplete="off" class="login-input">
+                <button type="submit" class="primary-btn" style="padding: 12px; margin-top: 8px;">Login</button>
+            </form>
+            <p id="login-error" class="hidden" style="color: var(--danger-color); margin-top: 16px; font-size: 0.9rem; text-align: center;">Invalid credentials.</p>
+        </div>
+    </div>
+
+    <div class="app-container hidden" id="main-app">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>My Lists</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button id="new-list-btn" class="icon-btn" title="Create new list">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    </button>
+                    <button id="logout-btn" class="icon-btn" title="Logout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                    </button>
+                </div>
+            </div>
+            <ul id="lists-container" class="lists-container">
+                <!-- Lists will be rendered here -->
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <header class="main-header">
+                <div class="list-title-container">
+                    <h1 id="current-list-title">Select a list</h1>
+                    <button id="rename-list-btn" class="icon-btn hidden" title="Rename list">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </button>
+                    <button id="delete-list-btn" class="icon-btn hidden text-danger" title="Delete list">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                </div>
+            </header>
+            
+            <div id="items-container" class="items-container">
+                <!-- Items will be rendered here -->
+            </div>
+            
+            <form id="new-item-form" class="new-item-form hidden">
+                <input type="text" id="new-item-input" placeholder="Add a new task..." required autocomplete="off">
+                <button type="submit" class="primary-btn">Add Task</button>
+            </form>
+        </main>
+        
+        <!-- Modal for item comments -->
+        <div id="comment-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-item-title">Task Comments</h3>
+                    <button id="close-modal-btn" class="icon-btn" title="Close">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="quill-editor" class="quill-editor"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-comment-btn" class="primary-btn">Save Comment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
