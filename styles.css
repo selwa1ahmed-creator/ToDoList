@@ -66,6 +66,8 @@ body {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    height: 100%;
 }
 
 .sidebar-header {
@@ -74,6 +76,7 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .sidebar-header h2 {
@@ -87,7 +90,18 @@ body {
     list-style: none;
     padding: 16px;
     overflow-y: auto;
-    flex-grow: 1;
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+.sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
 }
 
 .list-item {

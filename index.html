@@ -14,7 +14,7 @@
     <!-- Login Screen -->
     <div id="login-modal" class="modal">
         <div class="modal-content" style="max-width: 400px; padding: 24px;">
-            <h2 style="margin-bottom: 24px; color: #fff; text-align: center;">Welcome to Todo App</h2>
+            <h2 style="margin-bottom: 24px; color: #fff; text-align: center;">Welcome back</h2>
             <form id="login-form" style="display: flex; flex-direction: column; gap: 16px;">
                 <input type="email" id="login-email" placeholder="Email (e.g., john@gmail.com)" required autocomplete="off" class="login-input">
                 <input type="password" id="login-password" placeholder="Password" required autocomplete="off" class="login-input">
@@ -28,18 +28,25 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2>My Lists</h2>
-                <div style="display: flex; gap: 8px;">
-                    <button id="new-list-btn" class="icon-btn" title="Create new list">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-                    </button>
-                    <button id="logout-btn" class="icon-btn" title="Logout">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-                    </button>
-                </div>
+                <button id="new-list-btn" class="icon-btn" title="Create new list">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
             </div>
             <ul id="lists-container" class="lists-container">
                 <!-- Lists will be rendered here -->
             </ul>
+            <div class="sidebar-footer">
+                <div style="color: var(--text-secondary); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span id="logged-in-user"></span>
+                </div>
+                <button id="save-db-btn" style="padding: 8px; cursor: pointer; border: 1px solid var(--border-color); background: var(--surface-color); color: var(--text-primary); border-radius: 4px;">Save to Disk</button>
+                <button id="open-db-btn" style="padding: 8px; cursor: pointer; border: 1px solid var(--border-color); background: var(--surface-color); color: var(--text-primary); border-radius: 4px;">Open from Disk</button>
+                <input type="file" id="file-input" accept=".json" class="hidden">
+                <button id="logout-btn" style="padding: 8px; cursor: pointer; border: 1px solid var(--danger-color); background: transparent; color: var(--danger-color); border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    Logout
+                </button>
+            </div>
         </aside>
         
         <main class="main-content">

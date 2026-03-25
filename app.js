@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- State ---
     let currentUser = null;
+    let fullDatabase = {}; // Stores all users' data
     let state = {
         lists: [],
         items: {},
@@ -52,11 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Helpers ---
     const saveState = () => {
         if (!currentUser) return;
-        fetch('/api/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: currentUser, state: state })
-        }).catch(err => console.error('Failed to save state to server', err));
+        fullDatabase[currentUser] = state;
+        // Optionally save to localStorage for temporary persistence
+        localStorage.setItem('localFallbackDB', JSON.stringify(fullDatabase));
     };
 
     const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -294,35 +293,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Auth Logic ---
-    const loadState = async (email) => {
-        try {
-            const response = await fetch(`/api/load?user=${encodeURIComponent(email)}`);
-            const data = await response.json();
-            
-            state.lists = data.lists || [];
-            state.items = data.items || {};
-            
-            if (state.lists.length === 0) {
-                const initialListId = generateId();
-                state.lists.push({ id: initialListId, name: 'My First List' });
-                state.items[initialListId] = [
-                    { id: generateId(), text: 'Welcome to your beautiful new Todo App!', isDone: false, comment: '<p>You can add rich text comments like <strong>this</strong>!</p>' }
-                ];
-                state.currentListId = initialListId;
-                saveState();
-            } else {
-                if (state.lists.length > 0 && !state.currentListId) {
-                    state.currentListId = state.lists[0].id;
-                }
-            }
-            
-            renderLists();
-            renderItems();
-        } catch (e) {
-            console.error(e);
-            alert("Error connecting to Python backend. Ensure server.py is running!");
+    const loadState = (email) => {
+        const data = fullDatabase[email] || { lists: [], items: {} };
+        
+        state.lists = data.lists || [];
+        state.items = data.items || {};
+        
+        if (state.lists.length > 0 && !state.currentListId) {
+            state.currentListId = state.lists[0].id;
+        } else if (state.lists.length === 0) {
+            state.currentListId = null;
         }
+        
+        renderLists();
+        renderItems();
     };
+
+    // Load fallback from localStorage if it exists
+    const fallback = localStorage.getItem('localFallbackDB');
+    if (fallback) {
+        try { fullDatabase = JSON.parse(fallback); } catch(e) {}
+    }
+
+    const saveDbBtn = document.getElementById('save-db-btn');
+    const openDbBtn = document.getElementById('open-db-btn');
+    const fileInput = document.getElementById('file-input');
+    const loggedInUserSpan = document.getElementById('logged-in-user');
+
+    if (saveDbBtn) {
+        saveDbBtn.addEventListener('click', () => {
+            saveState(); // Ensure latest is in fullDatabase
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDatabase, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "todo_db.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        });
+    }
+
+    if (openDbBtn && fileInput) {
+        openDbBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    fullDatabase = JSON.parse(event.target.result);
+                    // Reset currentListId so the loaded data picks the right list
+                    state.currentListId = null;
+                    if (currentUser) {
+                        loadState(currentUser);
+                        // Now persist to localStorage after loading
+                        localStorage.setItem('localFallbackDB', JSON.stringify(fullDatabase));
+                    }
+                    alert('Database loaded successfully from file!');
+                } catch (err) {
+                    alert('Invalid JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
 
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -332,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((email === 'john@gmail.com' && pwd === '123') || (email === 'doe@gmail.com' && pwd === '456')) {
             currentUser = email;
             localStorage.setItem('currentUser', email);
+            if (loggedInUserSpan) loggedInUserSpan.textContent = email;
             loginModal.classList.add('hidden');
             mainApp.classList.remove('hidden');
             loadState(email);
@@ -357,6 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
         currentUser = storedUser;
+        if (loggedInUserSpan) loggedInUserSpan.textContent = storedUser;
         loginModal.classList.add('hidden');
         mainApp.classList.remove('hidden');
         loadState(storedUser);
